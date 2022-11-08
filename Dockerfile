@@ -1,9 +1,7 @@
-
-FROM balenalib/raspberry-pi-debian:buster-build
+FROM ubuntu:18.04
 
 ENV FLEDGE_VERSION=1.9.2
-ENV FLEDGE_DISTRIBUTION=buster
-ENV FLEDGE_PLATFORM=armv7l
+ENV FLEDGE_DISTRIBUTION=ubuntu1804
 
 # Avoid interactive questions when installing Kerberos
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,7 +14,9 @@ RUN apt update && apt dist-upgrade -y && apt install --no-install-recommends --y
     python3-dev \
     rsyslog \
     sed \
-    wget && \
+    wget \
+    curl && \
+    FLEDGE_PLATFORM=$(uname -m) &&\
     # Download fledge install package and decompress it
     wget --no-check-certificate https://fledge-iot.s3.amazonaws.com/${FLEDGE_VERSION}/${FLEDGE_DISTRIBUTION}/${FLEDGE_PLATFORM}/fledge-${FLEDGE_VERSION}_${FLEDGE_PLATFORM}_${FLEDGE_DISTRIBUTION}.tgz && \
     tar -xzvf fledge-${FLEDGE_VERSION}_${FLEDGE_PLATFORM}_${FLEDGE_DISTRIBUTION}.tgz  && \
@@ -86,7 +86,7 @@ RUN apt update && apt dist-upgrade -y && apt install --no-install-recommends --y
     apt install /fledge/${FLEDGE_VERSION}/${FLEDGE_DISTRIBUTION}/${FLEDGE_PLATFORM}/fledge-south-sinusoid-${FLEDGE_VERSION}-${FLEDGE_PLATFORM}.deb -y && \
     apt install /fledge/${FLEDGE_VERSION}/${FLEDGE_DISTRIBUTION}/${FLEDGE_PLATFORM}/fledge-south-systeminfo-${FLEDGE_VERSION}-${FLEDGE_PLATFORM}.deb -y && \
     # Cleanup fledge installation packages
-    rm -f /*.tgz && \ 
+    rm -f /*.tgz && \
     # You may choose to leave the installation packages in the directory in case you need to troubleshoot
     rm -rf -r /fledge && \
     # General cleanup after using apt
